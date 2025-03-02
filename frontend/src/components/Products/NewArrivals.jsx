@@ -1,8 +1,16 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 const NewArrivals = () => {
+  const scrollRef = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+
 
   const newArrivals = [
     {
@@ -107,6 +115,60 @@ const NewArrivals = () => {
   ];
 
 
+  const handleMouseDown = (e) => {
+    setIsDragging(true)
+    setStartX(e.pageX - scrollRef.current.offsetLeft)
+    setScrollLeft(scrollRef.current.scrollLeft)
+  }
+
+
+  const hnadleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = x - startX;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+
+  }
+
+  const handleMouseUpOrLeave = () => {
+    setIsDragging(false)
+  }
+
+
+  const scrollAction = (direction) => {
+
+    const scrollAmount = direction === "left" ? -300 : 300;
+    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+
+
+
+  }
+
+  const updateScrollButtons = () => {
+    const container = scrollRef.current;
+
+    if (container) {
+      const leftScroll = container.scrollLeft;
+      const rightScrollable = container.scrollWidth > leftScroll + container.clientWidth;
+
+      setCanScrollLeft(leftScroll > 0)
+      setCanScrollRight(rightScrollable)
+
+    }
+
+  }
+
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      container.addEventListener("scroll", updateScrollButtons)
+      updateScrollButtons();
+    }
+  })
+
+
 
   return (
     <section className='py-16 px-4 lg:px-0'>
@@ -116,12 +178,18 @@ const NewArrivals = () => {
 
         {/* Scroll Buttons */}
 
-        <div className='absolute right-0 buttom-[-30px] flex space-x-2'>
-          <button className='p-2 rounded border bg-white text-black shadow-md'>
+        <div className='absolute right-0 bottom-[-30px] flex space-x-2'>
+          <button
+            onClick={() => scrollAction('left')}
+            disabled={!canScrollLeft}
+            className={`p-2 rounded border bg ${canScrollLeft ? "bg-white text-black" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
             <FiChevronLeft className='text-2xl bg-blue-700' />
           </button>
 
-          <button className=' p-2 rounded border bg-white text-black '>
+          <button
+            onClick={() => scrollAction('right')}
+            disabled={!canScrollRight}
+            className={`p-2 rounded border bg ${canScrollLeft ? "bg-white text-black" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
             <FiChevronRight className='text-2xl bg-blue-700' />
           </button>
         </div>
@@ -129,7 +197,14 @@ const NewArrivals = () => {
 
       {/* Scrollable Content */}
 
-      <div className='container mx-auto overflow-x-scroll flex space-x-6 relative pt-10'>
+      <div ref={scrollRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={hnadleMouseMove}
+        onMouseUp={handleMouseUpOrLeave}
+        onMouseLeave={handleMouseUpOrLeave}
+
+        className={`container mx-auto overflow-x-scroll flex space-x-6 relative pt-10 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} >
+
         {
           newArrivals.map((product) => (
             <div key={product._id}
@@ -139,7 +214,9 @@ const NewArrivals = () => {
                 className='w-full h-[500px] object-cover rounded-lg'
               />
 
-              <div className='absolute bottom-0 right-0 left-0 bg-opacity-50 backdrop-blur-md text-white p-4 rounded-b-lg'>
+              <div className='absolute bottom-0 right-0 left-0 bg-opacity-50 backdrop-blur-md text-white p-4 rounded-b-lg'
+                draggable="false"
+              >
                 <Link to={`/product/${product._id}`} className='block'>
                   <h4 className='font-medium'> {product.name} </h4>
                   <p className='mt-1'> $ {product.price}</p>
@@ -149,7 +226,7 @@ const NewArrivals = () => {
           ))
         }
       </div>
-    </section>
+    </section >
   )
 }
 

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import ProductGrid from './ProductGrid'
 
 const selectedProduct = {
   name: "Stylish Jacket",
@@ -17,15 +19,40 @@ const selectedProduct = {
     url: "https://picsum.photos/500/500?random=2",
     altText: "Stylish Jacket 2",
   }
-
   ]
-
-
 }
+
+const similarProducts = [
+
+  {
+    _id: 2,
+    name: "Product 2",
+    price: 100,
+    images: [{ url: "https://picsum.photos/500/500?random=2" }]
+  },
+  {
+    _id: 3,
+    name: "Product 3",
+    price: 100,
+    images: [{ url: "https://picsum.photos/500/500?random=3" }]
+  },
+  {
+    _id: 4,
+    name: "Product 4",
+    price: 100,
+    images: [{ url: "https://picsum.photos/500/500?random=4" }]
+  },
+  {
+    _id: 5,
+    name: "Product 5",
+    price: 100,
+    images: [{ url: "https://picsum.photos/500/500?random=5" }]
+  }
+]
 
 const ProductDetails = () => {
 
-  const [mainImage, setMainImge] = useState("")
+  const [mainImage, setMainImge] = useState(null)
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedColor, setSelectedColor] = useState('')
   const [quantity, setQuantity] = useState(1)
@@ -44,6 +71,21 @@ const ProductDetails = () => {
 
     if (action === "minus" && quantity > 1) setQuantity((prev) => prev - 1)
   }
+
+  const handleAddToCard = () => {
+    if (!selectedSize || !selectedColor) {
+      return toast.error("please selected the Cards", { duration: 1000, });
+
+    }
+
+    setIsButtonDisabled(true);
+    setTimeout(() => {
+      toast.success("Product added to cart!", { duration: 1000, });
+      setIsButtonDisabled(false)
+    }, 500)
+  }
+
+
 
   return (
     <div className='max-w-6xl mx-auto bg-white p-8 rounded-lg'>
@@ -76,7 +118,9 @@ const ProductDetails = () => {
         <div className="md:hidden flex overscroll-x-scroll space-x-4 mb-4">
           {
             selectedProduct.images.map((image, index) => (
-              <img src={image.url} alt={image.altText || `Thumnail ${index}`}
+              <img src={image.url}
+                key={index}
+                alt={image.altText || `Thumnail ${index}`}
                 className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-gray-300"}`}
                 onClick={() => setMainImge(image.url)}
               />
@@ -154,11 +198,15 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          <button className='bg-black text-white py-2 px-6 rounded w-full mb-4'>
-            ADD TO CART
+          <button
+            onClick={handleAddToCard}
+            disabled={isButtonDisabled}
+            className={`bg-black text-white py-2 px-6 rounded w-full mb-4 ${isButtonDisabled ? "cursor-not-allowed opacity-50" : "hover:bg-gray-900"}`}>
+            {isButtonDisabled ? "Adding..." : "ADD TO CART"}
           </button>
 
-          <div className="mt-10 text-gray-700">
+          <div
+            className="mt-10 text-gray-700">
             <h3 className='text-xl font-bold mb-4'>Characteristics </h3>
             <table className='w-full text-left text-sm text-gray-600'>
               <tbody>
@@ -175,6 +223,11 @@ const ProductDetails = () => {
           </div>
 
         </div>
+
+      </div>
+      <div className="mt-20">
+        <h2 className='text-2xl text-center font-mediu mb-4'>You May also Like</h2>
+        <ProductGrid product={similarProducts} />
       </div>
     </div>
   )
