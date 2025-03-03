@@ -35,7 +35,7 @@ const Navbar = () => {
 
       {/* Center - Navigation LInks */}
       <div className='hidden md:flex space-x-6'>
-        <Link to='#' className='text-gray-700 hover:text-black text-sm font-medium uppercase'>
+        <Link to='Collections/all' className='text-gray-700 hover:text-black text-sm font-medium uppercase'>
           Men
         </Link>
 
@@ -96,7 +96,7 @@ const Navbar = () => {
       <div className='p-4'>
         <h2 className='text-xl font-semibold mb-4'>Menu</h2>
         <nav className='space-y-4'>
-          <Link to="/collection"
+          <Link to="collections/all"
             onClick={toggleNavDrawer}
             className='block text-gray-600 hover:text-black'>
             Men
