@@ -108,6 +108,7 @@ const CollectionPage = () => {
         className={` ${isSidebarOpen ? "translate-x-0" : '-translate-x-full'} fixed inset-y-0 z-50 bg-white left-0 w-64 overflow-y-auto  transition-transform duration-300 lg:static lg:translate-x-0`}
       >
         <FilterSidebar />
+
       </div>
 
       <div className="flex-grow p-4">
@@ -115,6 +116,8 @@ const CollectionPage = () => {
 
         {/* Sort Options */}
         <SortOptions />
+
+
 
         {/* Product Grid */}
         <ProductGrid product={products} />
