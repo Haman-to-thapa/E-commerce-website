@@ -57,6 +57,10 @@ const Navbar = () => {
       {/* {Right section} */}
 
       <div className='flex items-center space-x-4'>
+        <Link to='/admin'
+          className='block bg-black px-2  py-2 rounded-full text-sm text-white hover:bg-blue-950 hover:scale-105'
+        >Admin Login</Link>
+
         <Link to='/profile' className='hover:text-black'>
           <HiOutlineUser className='h-6 w-7 text-gray-700' />
         </Link>
@@ -79,7 +83,7 @@ const Navbar = () => {
         </button>
       </div>
 
-    </nav>
+    </nav >
 
     <CartDrawer drawerOpen={drawerOpen} toggleCartDrawer={toggleCartDrawer} />
 
