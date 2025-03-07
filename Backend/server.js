@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js'
+import userRoutes from './routes/userRoutes.js'
 
 const app = express()
 app.use(express.json())
@@ -19,6 +20,10 @@ connectDB();
 app.get('/', (req, res) => {
   res.send("Welcom to new Page");
 })
+
+// API Routes 
+app.use("/api/users", userRoutes)
+
 
 app.listen(PORT, () => {
   console.log(`server is runing on http://localhost:${PORT}`);
