@@ -29,4 +29,9 @@ const protect = async (req, res, next) => {
   }
 };
 
+// MIddleware to check if the uer is an admin
+
+
 export default protect;
+
+
