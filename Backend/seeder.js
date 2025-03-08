@@ -11,7 +11,9 @@ dotenv.config()
 
 // Connect to mongoDB
 
-await mongoose.connect(process.env.MONGO_URI);
+await mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Function to seed data
 
