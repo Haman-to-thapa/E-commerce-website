@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
   brand: {type:String,},
   sizes:{type:[String], required:true,},
   colors:{type:[String], required:true,},
-  collections: {type:String, required:true,},
+  collections: { type: String, required: true },
   material : {type:String,},
   gender:{type:String,enum:["Men", "Women", "Unisex"],},
   images:[{url: {type:String, required:true,}, altText: {type: String,}}],

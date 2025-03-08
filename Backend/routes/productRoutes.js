@@ -3,12 +3,14 @@ import protect from "../middleware/authMiddleware.js";
 import Product from "../models/product.js";
 import admin from "../middleware/adminMiddleware.js";
 
+
+
 const router = express.Router();
 
 // @route POST /api/products
 // @desc Create a new Product
 // @access Private/Admin
-router.post("/products", protect, admin, async (req, res) => {
+router.post("/", protect, admin, async (req, res) => {
   try {
     const {
       name,
@@ -55,6 +57,11 @@ router.post("/products", protect, admin, async (req, res) => {
       weight,
       user: req.user._id, // Reference to the admin user who created it
     });
+
+
+    if (!collections) {
+      return res.status(400).json({ error: 'Collections field is required' });
+  }
 
     // Save product to DB
     const createdProduct = await product.save();
@@ -151,5 +158,161 @@ router.delete('/:id', protect, admin, async(req, res) => {
   }
 
 })
+
+// @route GET / api/products
+// @desc Get all proudcts with optional query filters
+// @access pulic
+
+router.get('/', async (req, res) => {
+  try {
+    const {collection, size, color, gender, minPrice, maxPrice,sortBy, search, category, material, brand, limit} = req.query;
+
+    let query = {};
+
+    //  Filter logic 
+    //collections
+    if(collection && collection.toLocaleLowerCase() !== 'all'){
+      query.collections = collection;
+    }
+
+    //category
+    if(category && category.toLocaleLowerCase() !== "all"){
+      query.category = category;
+    }
+  //material
+  if(material) {
+    query.material = {$in : material.split(",")};
+  }
+  //brand 
+  if(brand) {
+    query.brand = {$in  : brand.split(",")}
+  }
+  //size
+  if(size) {
+    query.size = {$in : size.split(",")}
+  }
+
+  // color 
+  if(color) {
+    query.color = {$in : [color]}
+  }
+  // gender 
+  if(gender) {
+    query.gender = gender;
+  }
+
+  // minPrice 
+  if(minPrice || maxPrice) {
+    query.price = {};
+    if(minPrice) query.price.$gte = Number(minPrice);
+    if(maxPrice) query.price.$lte = Number(maxPrice);
+  }
+// search
+  // if(search) {
+  //   query.$or = [
+  //     { name: {$regex: search , $option: "i"}},
+  //     {description: {$regex: search, $option: "i"}},
+  //   ]
+  // }
+  if (search) {
+    query.$or = [
+      { name: { $regex: search, $options: "i" } }, 
+      { description: { $regex: search, $options: "i" } }, 
+    ];
+  }
+
+  // Sort Logic 
+ let sort = {};
+  if(sortBy) {
+    switch (sortBy) {
+      case "priceAsc": sort = {price : 1};
+      break;
+      case "priceDesc": sort = {price : -1};
+      break;
+      case "popularity": sort = {rating: -1};
+      break;
+      default: 
+      break;
+    }
+  }
+
+  // Fetching products and apply shorting and limit
+  let products = await Product.find(query).sort(sort)
+  .limit(Number(limit) || 0)
+  res.json(products)
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json("server error");
+  }
+})
+
+
+//@route Get / api/products/new-arrivals
+//dec Reterive latest 8 products - creation date
+// @access public
+
+router.get('/new-arrivals', async (req, res) => {
+  try {
+    //fetching latest 8 products
+    const newArrivals = await Product.find().sort({createdAt: -1}).limit(8)
+    res.json(newArrivals);
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json("Server Error")
+  }
+})
+
+
+// @route Get / api/products/:id
+// @desc Get a single poduct by ID
+// @access Public
+
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+    if(product) {
+      res.json(product)
+    } else {
+      console.error(error)
+    res.status(500).send("Server Error")
+    }   
+  } catch (error) {
+  }
+})
+
+// @route GET /api/products/similar/:id
+// @desc Retrieve similar based on the current product's gender and category
+// @access Public 
+router.get("/similar/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("Received ID:", id);
+
+  try {
+    const handleProduct = await Product.findById(id)
+    console.log(handleProduct)
+    console.log("products",Product)
+    
+
+    if (!handleProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const similarProducts = await Product.find({
+      _id: { $ne: id }, // Exclude the current product
+      gender: handleProduct.gender,
+      category: handleProduct.category,
+    }).limit(4);
+
+    res.json(similarProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+
+
 
 export default router;
