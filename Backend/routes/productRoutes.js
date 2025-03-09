@@ -248,6 +248,27 @@ router.get('/', async (req, res) => {
 })
 
 
+// @route Get / api/products/best-seller
+// @desc Retrieve the product with highest rating
+// @access Public
+
+router.get("/best-seller", async(req, res) => {
+  try {
+    const bestSeller  = await Product.findOne().sort({rating : -1});
+    
+    if(bestSeller) {
+      res.json(bestSeller)
+    }else {
+      res.status(404).json({messgae: "No best seller found" })
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error")
+  }
+})
+
+
+
 //@route Get / api/products/new-arrivals
 //dec Reterive latest 8 products - creation date
 // @access public
@@ -311,7 +332,6 @@ router.get("/similar/:id", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
-
 
 
 
