@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import product from './models/product.js';
 import User from './models/User.js';
 import products from './data/products.js';
+import Cart from './models/Cart.js';
 
 
 
@@ -23,6 +24,7 @@ const seedData = async () => {
 
     await product.deleteMany();
     await User.deleteMany();
+    await Cart.deleteMany();
 
 
     // Create a default amdin User
