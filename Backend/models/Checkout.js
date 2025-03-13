@@ -10,12 +10,14 @@ const checkoutItemSchema = new mongoose.Schema({
 
   price: {type: Number, required:true}, 
 
+  quantity: {type: Number, required: true}
+
 },
 {_id: false}
 );
 
 
-const cheeckoutSchema = new mongoose.Schema({
+const checkoutSchema = new mongoose.Schema({
 
   user: {type: mongoose.Schema.Types.ObjectId, ref: "User",
     required: true,
@@ -42,4 +44,4 @@ const cheeckoutSchema = new mongoose.Schema({
 {timestamps: true}
 )
 
-export default mongoose.model("Checkout", cheeckoutSchema);
+export default mongoose.model("Checkout", checkoutSchema);
