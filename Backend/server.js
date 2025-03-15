@@ -9,6 +9,7 @@ import checkoutRoutes from './routes/checkoutRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import subscribeRoute from './routes/subscriberRoute.js'
+import adminRoutes from './routes/adminRoutes.js'
 
 const app = express()
 // app.use(express.json())
@@ -39,6 +40,10 @@ app.use("/api/checkout", checkoutRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/upload',uploadRoutes)
 app.use('/api',subscribeRoute )
+
+
+// Admin User
+app.use('/api/admin/users', adminRoutes)
 
 
 
