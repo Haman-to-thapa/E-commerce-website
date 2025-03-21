@@ -10,6 +10,8 @@ import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import subscribeRoute from './routes/subscriberRoute.js'
 import adminRoutes from './routes/adminRoutes.js'
+import productAdminRoutes from './routes/productAdminRoutes.js'
+import adminOrderRoutes from './routes/adminOrderRoutes.js'
 
 const app = express()
 // app.use(express.json())
@@ -28,7 +30,7 @@ const PORT = process.env.PORT || 3000;
 //connected to be mongoDb
 connectDB();
 
-app.get('/', (req, res) => {
+app.post('/', (req, res) => {
   res.send("Welcom to new Page");
 })
 
@@ -44,6 +46,8 @@ app.use('/api',subscribeRoute )
 
 // Admin User
 app.use('/api/admin/users', adminRoutes)
+app.use('/api/admin/products',productAdminRoutes)
+app.use('/api/admin/orders',adminOrderRoutes)
 
 
 

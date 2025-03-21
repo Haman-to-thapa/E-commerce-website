@@ -51,23 +51,29 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ message: "Please enter both email and password" });
+  }
   try {
     let user = await User.findOne({ email });
 
     if (!user) {
       res.status(400).json({ message: "Invalid Email try again" });
     }
-    const isMatch = await user.matchPassword(password);
+    const isMatch = await user.matchPassword(password)
 
     if (!isMatch) {
-      return res.json({ message: "Wrong Password" });
+      return res.status(400).json({message: "Wrong Password"})
     }
 
     const payload = { user: { _id: user._id, role: user.role } };
     const secretKey = process.env.JWT_SECRET.trim();
 
     jwt.sign(payload, secretKey, { expiresIn: "40h" }, async (err, token) => {
-      if (err) throw err;
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error" }); 
+      }
 
       res.status(201).json({
         user: {
@@ -91,6 +97,8 @@ router.post("/login", async (req, res) => {
 router.get("/profile", protect, async (req, res) => {
   res.json(req.user)
 });
+
+
 
 
 export default router;
