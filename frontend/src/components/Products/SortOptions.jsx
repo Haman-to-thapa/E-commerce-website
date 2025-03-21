@@ -28,7 +28,7 @@ const SortOptions = () => {
         onChange={handleSortChange}
         // value={searchParms.get('sortBy') || ""}
 
-        value={searchParms.get("sortBy" || '')}
+        value={searchParms.get("sortBy") || ''}
       >
         <option value="Default">Default</option>
         <option value="priceAsc">Pirce: Low to High</option>

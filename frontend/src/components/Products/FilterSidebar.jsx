@@ -112,13 +112,14 @@ const FilterSidebar = () => {
 
     Object.keys(newFilters).forEach((key) => {
       if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
-        param.append(newFilters[key])
+        // param.append(newFilters[key])
+        newFilters[key].forEach(value => param.append(key, value))
       } else if (newFilters[key]) {
-        param.append(newFilters)
+        param.append(key, newFilters[key]);
       }
     })
     setSearchParam(param)
-    navigate(`?${param.toString}`)
+    navigate(`?${param.toString()}`)
   }
 
   const handlePriceChange = (e) => {
