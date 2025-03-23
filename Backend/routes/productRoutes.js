@@ -312,8 +312,7 @@ router.get("/similar/:id", async (req, res) => {
 
   try {
     const handleProduct = await Product.findById(id)
-    console.log(handleProduct)
-    console.log("products",Product)
+    
     
 
     if (!handleProduct) {
