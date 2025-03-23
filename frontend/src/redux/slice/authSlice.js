@@ -27,13 +27,17 @@ export const loginUser = createAsyncThunk('auth/loginUser', async(userData, {rej
   try {
     const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`,userData);
 
-    localStorage.setItem("userInfo",JSON.stringify(response.data.user));
-    localStorage.setItem('userToken', response.data.token)
-
+   // Ensure user and token exist before storing
+   if (response.data && response.data.token) {
+    localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+    localStorage.setItem("userToken", response.data.token);
+  } else {
+    throw new Error("Token not found in response");
+  }
     return response.data.user; // Return the user object from the response
 
   } catch (error) {
-    return rejectWithValue(error.response.data);
+    return rejectWithValue(error.response.data || "Login Failed");
   };
 })
 
