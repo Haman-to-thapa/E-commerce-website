@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -133,7 +133,7 @@ router.put('/', async(req, res) => {
     
   } catch (error) {
     console.error(error)
-    res.status(500).json({message: "server error"})
+    return res.status(500).json({message: "server error"})
     
   }
 })
@@ -187,14 +187,14 @@ router.get('/', async(req, res) => {
     
     const cart = await getCart(userId, guestId);
     if (cart) {
-      res.json(cart);
+     return res.json(cart);
     } else {
-      res.status(404).json({message: "Cart not found"})
+    return  res.status(404).json({message: "Cart not found"})
     }
 
   } catch (error) {
     console.error(error)
-    res.status(500).json({message: "Server Error"})
+    return  res.status(500).json({message: "Server Error"})
     
   }
 })
@@ -247,7 +247,7 @@ router.post('/merge', protect, async(req, res) => {
         console.error("Error deleting guestCard", error)
       }
 
-      res.status(200).json(userCart)
+      return res.status(200).json(userCart)
 
     } else {
       // if the user has no existing cart, assign the guest cart to the user
@@ -255,7 +255,7 @@ router.post('/merge', protect, async(req, res) => {
       guestCard.guestId = undefined;
       await guestCard.save()
 
-      res.status(200).json(guestCard)
+      return res.status(200).json(userCart)
     }
 
     res.status(404).json({message: "Guest cart not found"})
@@ -268,7 +268,7 @@ router.post('/merge', protect, async(req, res) => {
   }
   } catch (error) {
     console.error(error)
-    res.status(500).json({message: "Server Error"})
+    return res.status(500).json({ message: "Server Error" })
   }
 })
 
