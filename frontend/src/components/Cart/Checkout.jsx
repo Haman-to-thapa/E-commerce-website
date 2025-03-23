@@ -76,9 +76,6 @@ const Checkout = () => {
   const handlePaymentSuccess = async (details) => {
     try {
 
-      console.log("Payment Details:", details);
-      console.log("Checkout ID before request:", checkoutId);
-
       await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
         { paymentStatus: "Paid", paymentDetails: details }
         , {
