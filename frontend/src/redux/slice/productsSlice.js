@@ -64,7 +64,8 @@ export const updateProduct = createAsyncThunk('products/updateProduct', async({i
 
     return response.data;
   } catch (error) {
-  return rejectWithValue(error.response?.message || "Failed to similarProducts")
+    return rejectWithValue(error.response?.data || "Failed to update product");
+
   }
 })
 
@@ -142,7 +143,7 @@ const productSlice = createSlice({
     })
     .addCase(fetchProductsByFilters.rejected, (state,action) => {
       state.loading = false;
-      state.error = action.error.message;
+      state.error = action.payload || "Failed to fetch products";
     })
     // Handle fetching singel product details
     .addCase(fetchProductDetails.pending, (state) => {
