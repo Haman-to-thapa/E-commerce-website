@@ -13,7 +13,7 @@ const router = express.Router()
 router.get('/',protect, admin, async(req, res) => {
 try {
   const orders = await Order.find({}).populate("user", 'name email')
-  res.json(orders)
+  return res.json(orders)
 } catch (error) {
   console.error(error);
   res.status(500).json({message: "Server Error"})
@@ -26,8 +26,10 @@ try {
 
 router.put('/:id', protect, admin, async(req,res) => {
   try {
+
+    console.log("Updating order with ID:", req.params.id);
     
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('user','name');
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -41,7 +43,7 @@ router.put('/:id', protect, admin, async(req,res) => {
       ? Date.now() : order.deliveredAt;
 
       const updatedOrder = await order.save();
-      res.json(updatedOrder)
+      return res.json(updatedOrder)
     } else {
       res.status(404).json({message: "not found"});
     }

@@ -62,7 +62,9 @@ router.put("/:id",protect,admin, async(req, res) => {
     if(user) {
       user.name = req.body.name || user.name;
       user.email = req.body.email || user.email;
-      user.role = req.body.role || user.role;
+      if (req.body.role !== undefined) {
+        user.role = req.body.role;  // Update role only if it is provided
+      }
     }
     const updatedUser = await user.save();
 

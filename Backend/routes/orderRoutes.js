@@ -18,7 +18,7 @@ router.get('/my-orders', protect, async(req,res) => {
       createdAt: -1,
     }) // sort by most  recent orders
    
-    res.json(orders)
+    return res.json(orders);
 
   } catch (error) {
     console.error(error);
@@ -34,13 +34,13 @@ router.get('/my-orders', protect, async(req,res) => {
 router.get('/:id', protect, async(req,res) => {
 
   try {
-    const orderss = await Order.findById(req.params.id).populate("user", "name email");
+    const orders = await Order.findById(req.params.id).populate("user", "name email");
 
-    if(!orderss) {
-      res.status(404).json({message: "Order not found"})
+    if(!orders) {
+      return res.status(404).json({ message: "Order not found" });
     }
     //Return the full order details
-    res.json(orderss)
+    return res.json(orders)
     
   } catch (error) {
     console.error(error);
