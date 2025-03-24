@@ -1,43 +1,55 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { clearCart } from '../redux/slice/cartSlice'
 
-const checkout = {
+// const checkout = {
 
-  _id: "12343",
-  checkedAt: new Date(),
-  checkoutItems: [
-    {
-      productId: "1",
-      name: "Jacket",
-      color: "black",
-      size: "M",
-      price: 120,
-      quantity: 1,
-      image: "https://picsum.photos/150?random=1",
-    },
-    {
-      productId: "2",
-      name: "Hoodie",
-      color: "Gray",
-      size: "L",
-      price: 90,
-      quantity: 2,
-      image: "https://picsum.photos/150?random=2"
-    },
-  ],
-  shippingAddress: {
-    address: "123 Fashion Street",
-    city: "New York",
-    country: "USA",
-  }
+//   _id: "12343",
+//   checkedAt: new Date(),
+//   checkoutItems: [
+//     {
+//       productId: "1",
+//       name: "Jacket",
+//       color: "black",
+//       size: "M",
+//       price: 120,
+//       quantity: 1,
+//       image: "https://picsum.photos/150?random=1",
+//     },
+//     {
+//       productId: "2",
+//       name: "Hoodie",
+//       color: "Gray",
+//       size: "L",
+//       price: 90,
+//       quantity: 2,
+//       image: "https://picsum.photos/150?random=2"
+//     },
+//   ],
+//   shippingAddress: {
+//     address: "123 Fashion Street",
+//     city: "New York",
+//     country: "USA",
+//   }
 
-};
-
-
-
-
+// };
 
 const OrderConfirmationPage = () => {
 
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { checkout } = useSelector((state) => state.checkout);
+
+  // Clear the cart when the order is confirmed
+  useEffect(() => {
+    if (checkout && checkout._id) {
+      dispatch(clearCart());
+      localStorage.removeItem("cart");
+    } else {
+      navigate('/my-order')
+    }
+  }, [checkout, dispatch, navigate])
 
 
   const calculatedEstimatedDeliver = (createdAt) => {
