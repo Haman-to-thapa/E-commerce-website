@@ -89,7 +89,7 @@ const Register = () => {
           <p
             className='text-center mt-3 text-sm'
           >You have an account?
-            <Link to={`login?redirect=${encodeURIComponent(redirect)}`} className='text-blue-500 underline'>Login here</Link></p>
+            <Link to={`/login?redirect=${encodeURIComponent(redirect || "/")}`} className='text-blue-500 underline'>Login here</Link></p>
         </form>
       </div>
       <div className="hidden md:block w-1/2 bg-gray-800">
