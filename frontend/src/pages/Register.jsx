@@ -12,7 +12,7 @@ const Register = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useSelector((state) => state.auth);
+  const { user, guestId, loading } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   // Get redirect paramerter and check if it's checkout or something
@@ -89,7 +89,11 @@ const Register = () => {
           <p
             className='text-center mt-3 text-sm'
           >You have an account?
-            <Link to={`/login?redirect=${encodeURIComponent(redirect || "/")}`} className='text-blue-500 underline'>Login here</Link></p>
+            <Link to={`/login?redirect=${encodeURIComponent(redirect || "/")}`} className='text-blue-500 underline'>
+              {
+                loading ? "Loading..." : " Sign In "
+              }
+              Login here</Link></p>
         </form>
       </div>
       <div className="hidden md:block w-1/2 bg-gray-800">

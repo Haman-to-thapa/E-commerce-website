@@ -18,6 +18,10 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.auth)
   const cartItemCount = cart?.products?.reduce((total, product) => total + product.quantity, 0) || 0;
 
+  console.log("User from Redux:", user);
+  console.log("User Role:", user?.role);
+
+
   const toggleNavDrawer = () => {
     setNavDrawerOpen(!navDrawerOpen)
   }

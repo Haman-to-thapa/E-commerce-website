@@ -11,7 +11,7 @@ const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation();
-  const { user, guestId } = useSelector((state) => state.auth);
+  const { user, guestId, loading } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   //Get redurect parameter and check if it's checkout or something
@@ -79,7 +79,10 @@ const Login = () => {
           <button
             type='submit'
             className='w-full p-2 bg-black text-white rounded-full mt-2 hover:bg-gray-800 transition-all'
-          >Sign In </button>
+          >
+            {loading ? "Loading..." : " Sign In "}
+
+          </button>
 
           <p className='mt-6 text-center text-sm'>Don't have an account? {""}
             <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className='text-blue-500 underline'>Register</Link>

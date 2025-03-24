@@ -82,7 +82,7 @@ const authSlice = createSlice({
     }).addCase(loginUser.fulfilled, (state,action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = null;
+      console.log("Auth Slice - User from API:", state.user);
     }).addCase(loginUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload?.message || "Login Failed";
