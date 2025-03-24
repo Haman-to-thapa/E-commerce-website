@@ -15,6 +15,7 @@ const Navbar = () => {
 
   //cart add 
   const { cart } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth)
   const cartItemCount = cart?.products?.reduce((total, product) => total + product.quantity, 0) || 0;
 
   const toggleNavDrawer = () => {
@@ -62,9 +63,11 @@ const Navbar = () => {
       {/* {Right section} */}
 
       <div className='flex items-center space-x-4'>
-        <Link to='/admin'
-          className='block bg-black px-2  py-2 rounded-full text-sm text-white hover:bg-blue-950 hover:scale-105'
-        >Admin Login</Link>
+        {
+          user && user.role === "admin" && (<Link to='/admin'
+            className='block bg-black px-2  py-2 rounded-full text-sm text-white hover:bg-blue-950 hover:scale-105'
+          >Admin Login</Link>)
+        }
 
         <Link to='/profile' className='hover:text-black'>
           <HiOutlineUser className='h-6 w-7 text-gray-700' />
