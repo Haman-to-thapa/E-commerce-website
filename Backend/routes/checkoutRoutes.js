@@ -14,9 +14,10 @@ const router = express.Router()
 router.post('/', protect, async(req, res) => {
   const {checkoutItems ,shippingAddress, paymentMethod, totalPrice} = req.body
 
-  if(!checkoutItems || checkoutItems.length === 0){
-    res.status(400).json({message: "No items in checkout"});
-  } 
+  if (!checkoutItems || checkoutItems.length === 0) {
+    return res.status(400).json({ message: "No items in checkout" });
+  }
+  
 
   try {
     const newChekout = await Checkout.create({
@@ -87,7 +88,7 @@ router.post('/:id/finalize', protect, async(req, res) => {
 
       const finalOrder = await Order.create({
         user: checkout.user,
-        orderItems: checkout.orderItems,
+        orderItems: checkout.checkoutItems,
         shippingAddress: checkout.shippingAddress,
         paymentMethod: checkout.paymentMethod,
         totalPrice: checkout.totalPrice,
