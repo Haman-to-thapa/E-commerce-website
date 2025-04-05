@@ -1,4 +1,4 @@
-import Order from '../models/Order.js'
+import Order from './../models/Order.js'
 import express from 'express'
 import Cart from '../models/Cart.js'
 import Checkout from '../models/Checkout.js'
