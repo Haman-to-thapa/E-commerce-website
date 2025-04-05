@@ -1,7 +1,6 @@
 import express from 'express';
 import protect from '../middleware/authMiddleware.js';
-import order from '../models/order.js';
-
+import Order from '../models/Order.js';
 
 
 
@@ -15,7 +14,7 @@ const router = express.Router()
 router.get('/my-orders', protect, async(req,res) => {
   try {
     //Find orders for the authenicated user
-    const orders = await order.find({user: req.user._id}).sort({
+    const orders = await Order.find({user: req.user._id}).sort({
       createdAt: -1,
     }) // sort by most  recent orders
    
@@ -35,7 +34,7 @@ router.get('/my-orders', protect, async(req,res) => {
 router.get('/:id', protect, async(req,res) => {
 
   try {
-    const orders = await order.findById(req.params.id).populate("user", "name email");
+    const orders = await Order.findById(req.params.id).populate("user", "name email");
 
     if(!orders) {
       return res.status(404).json({ message: "Order not found" });
