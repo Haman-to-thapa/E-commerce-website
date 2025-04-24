@@ -3,8 +3,12 @@ services:
   - type: web
     name: e-commerce-website
     env: node
-    buildCommand: npm install && npm run build:frontend
+    buildCommand: npm install && cd frontend && npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 8001
+      - key: VITE_BACKEND_URL
+        value: https://e-commerce-website-curh.onrender.com

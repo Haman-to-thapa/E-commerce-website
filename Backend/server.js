@@ -15,8 +15,13 @@ import adminOrderRoutes from './routes/adminOrderRoutes.js'
 
 const app = express()
 // app.use(express.json())
-app.use(cors())
-app.use(cors({ origin: '*' }))
+// Configure CORS to allow all origins
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}))
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -34,7 +39,7 @@ app.post('/', (req, res) => {
   res.send("Welcom to new Page");
 })
 
-// API Routes 
+// API Routes
 app.use("/api/users", userRoutes)
 app.use("/api/products",productRoutes)
 app.use("/api/cart", cartRoutes)
@@ -49,6 +54,16 @@ app.use('/api/admin/users', adminRoutes)
 app.use('/api/admin/products',productAdminRoutes)
 app.use('/api/admin/orders',adminOrderRoutes)
 
+// Handle 404 errors
+app.use((req, res) => {
+  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: err.message || 'Something went wrong!' });
+});
 
 
 app.listen(PORT, () => {

@@ -1,7 +1,18 @@
 const express = require('express');
 const path = require('path');
+const { spawn } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Start the backend server
+console.log('Starting backend server...');
+const backendProcess = spawn('node', ['Backend/server.js'], {
+  stdio: 'inherit'
+});
+
+backendProcess.on('error', (err) => {
+  console.error('Failed to start backend server:', err);
+});
 
 // Serve static files from the frontend/build directory
 app.use(express.static(path.join(__dirname, 'frontend/build')));
