@@ -9,12 +9,16 @@ services:
       - key: NODE_ENV
         value: production
 
-  # Frontend service
-  - type: web
+  # Frontend service as a static site
+  - type: static
     name: e-commerce-frontend
-    env: node
-    buildCommand: cd frontend && npm run render-build
-    startCommand: cd frontend && npm start
+    env: static
+    buildCommand: cd frontend && npm install && npm run build:static
+    staticPublishPath: ./frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: NODE_ENV
         value: production

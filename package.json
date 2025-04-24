@@ -1,0 +1,25 @@
+{
+  "name": "e-commerce-website",
+  "version": "1.0.0",
+  "description": "E-commerce website with React frontend and Node.js backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd Backend && npm start",
+    "build": "cd frontend && npm install && npm run build",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd Backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
+  },
+  "keywords": [
+    "e-commerce",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
