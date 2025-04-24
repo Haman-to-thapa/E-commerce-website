@@ -13,7 +13,7 @@ services:
   - type: web
     name: e-commerce-frontend
     env: node
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: cd frontend && npm run render-build
     startCommand: cd frontend && npm start
     envVars:
       - key: NODE_ENV
