@@ -11,7 +11,8 @@
     "start": "node server.js",
     "render-build": "node build-render.js",
     "build:render": "node build.js",
-    "build:static": "node build-static.js"
+    "build:static": "node build-static.js",
+    "postbuild": "cp dist/index.html dist/200.html && cp dist/index.html dist/404.html"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^8.8.2",
