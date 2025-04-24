@@ -4,8 +4,10 @@
   "description": "E-commerce website with React frontend and Node.js backend",
   "main": "index.js",
   "scripts": {
-    "start": "cd Backend && npm start",
+    "start": "node server.js",
+    "start:backend": "cd Backend && npm start",
     "build": "cd frontend && npm install && npm run build",
+    "build:frontend": "cd frontend && npm install && npm run build:static",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd Backend && npm run dev",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
