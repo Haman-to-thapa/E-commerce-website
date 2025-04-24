@@ -27,7 +27,7 @@ import Shop from './components/Admin/Shop'
 const App = () => {
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename="/">
         <Toaster position="top-right" />
         <Routes>
 
