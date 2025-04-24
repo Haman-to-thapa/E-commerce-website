@@ -1,22 +1,33 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  build: {
-    outDir: 'build',
-    assetsDir: 'assets',
-    emptyOutDir: true,
-  },
   server: {
-    port: process.env.PORT || 3000,
-    host: '0.0.0.0', // This is important for Render
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/admin/, to: '/index.html' },
+        { from: /^\/admin\/.*/, to: '/index.html' }
+      ]
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
     },
   },
 })
