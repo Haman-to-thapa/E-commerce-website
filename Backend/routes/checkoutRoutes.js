@@ -1,4 +1,4 @@
-import Order from '/d:/Frontend-learning-file/Backend/models/Order.js'
+import Order from '../models/Order.js'
 import express from 'express'
 import Cart from '../models/Cart.js'
 import Checkout from '../models/Checkout.js'
@@ -17,7 +17,7 @@ router.post('/', protect, async(req, res) => {
   if (!checkoutItems || checkoutItems.length === 0) {
     return res.status(400).json({ message: "No items in checkout" });
   }
-  
+
 
   try {
     const newChekout = await Checkout.create({
@@ -35,7 +35,7 @@ router.post('/', protect, async(req, res) => {
   } catch (error) {
     console.error("Erorr creating checkout session ", error);
     res.status(500).json({message: "Server Error"});
-    
+
   }
 })
 
@@ -68,14 +68,14 @@ router.put('/:id/pay', protect, async(req,res) => {
   } catch (error) {
    console.error(error);
    res.status(500).json({message: "Server Error"});
-   
+
   }
 
 })
 
 // @route POST / api/checkout/:id/finalize
 // @desc Finalize checkout and convert to an order after payment confimration
-// @access Private 
+// @access Private
 router.post('/:id/finalize', protect, async(req, res) => {
   try {
     const checkout = await Checkout.findById(req.params.id);
@@ -84,7 +84,7 @@ router.post('/:id/finalize', protect, async(req, res) => {
       return res.status(404).json({message: "Checkout not found"});
     }
     if(checkout.isPaid && !checkout.isFinalized) {
-      // Create final order based on the checkout details 
+      // Create final order based on the checkout details
 
       const finalOrder = await Order.create({
         user: checkout.user,
@@ -96,10 +96,10 @@ router.post('/:id/finalize', protect, async(req, res) => {
         paidAt: checkout.paidAt,
         isDelivered: false,
         paymentStatus: "paid",
-        paymentDetails: checkout.paymentDetails, 
+        paymentDetails: checkout.paymentDetails,
       });
 
-      // Mark the checkout as finalized 
+      // Mark the checkout as finalized
       checkout.isFinalized = true;
       checkout.finalizedAt  = Date.now();
       await checkout.save()
