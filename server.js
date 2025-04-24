@@ -17,7 +17,14 @@ backendProcess.on('error', (err) => {
 // Serve static files from the frontend/build directory
 app.use(express.static(path.join(__dirname, 'frontend/build')));
 
-// For any request that doesn't match a static file, serve index.html
+// API requests should be proxied to the backend
+app.use('/api', (req, res) => {
+  // Forward the request to the backend
+  const backendUrl = `http://localhost:8001${req.url}`;
+  res.redirect(307, backendUrl);
+});
+
+// For any request that doesn't match a static file or API route, serve index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
 });

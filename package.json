@@ -7,7 +7,7 @@
     "start": "node server.js",
     "start:backend": "cd Backend && npm start",
     "start:frontend": "cd frontend && npm start",
-    "build": "cd frontend && npm install && npm run build",
+    "build": "node build.js",
     "build:frontend": "cd frontend && npm install && npm run build",
     "postinstall": "cd Backend && npm install && cd ../frontend && npm install",
     "dev:frontend": "cd frontend && npm run dev",
