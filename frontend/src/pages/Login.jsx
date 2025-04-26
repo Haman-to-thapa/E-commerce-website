@@ -51,7 +51,10 @@ const Login = () => {
             <h2 className='text-xl font-medium'>Rabbit</h2>
           </div>
           <h2 className='text-2xl font-bold text-center mb-6'>Hey threr! </h2>
-          <p className='text-center mb-6'>Enter your username and password to login.</p>
+          <p className='text-center mb-6'>Enter your username and password to login.
+
+            <span className='bg-red-400'>haman@gamil.com <br />123456</span>
+          </p>
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
