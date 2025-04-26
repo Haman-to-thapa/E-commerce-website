@@ -53,7 +53,7 @@ const Login = () => {
           <h2 className='text-2xl font-bold text-center mb-6'>Hey threr! </h2>
           <p className='text-center mb-6'>Enter your username and password to login.
 
-            <span className='bg-red-400'>haman@gamil.com <br />123456</span>
+            <span className='bg-red-400'>admin@example.com <br />123456</span>
           </p>
 
           <div className="mb-4">
