@@ -58,26 +58,33 @@ router.post("/login", async (req, res) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      res.status(400).json({ message: "Invalid Email try again" });
+      return res.status(400).json({ message: "Invalid Email try again" });
     }
-    const isMatch = await user.matchPassword(password)
+
+    const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({message: "Wrong Password"})
+      return res.status(400).json({message: "Wrong Password"});
     }
 
     const payload = { user: { _id: user._id, role: user.role } };
-    const secretKey = process.env.JWT_SECRET.trim();
+    // Make sure JWT_SECRET is properly formatted
+    const secretKey = process.env.JWT_SECRET ? process.env.JWT_SECRET.trim() : "";
+
+    if (!secretKey) {
+      console.error("JWT_SECRET is missing or empty");
+      return res.status(500).json({ message: "Server configuration error" });
+    }
 
     jwt.sign(payload, secretKey, { expiresIn: "40h" }, async (err, token) => {
       if (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Server error" }); 
+        console.error("JWT Sign Error:", err);
+        return res.status(500).json({ message: "Server error" });
       }
 
-      res.status(201).json({
+      return res.status(200).json({
         user: {
-          _id: user.id,
+          _id: user._id,
           name: user.name,
           email: user.email,
           role: user.role,
@@ -86,8 +93,8 @@ router.post("/login", async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(error);
-    res.json(error.message);
+    console.error("Login error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
