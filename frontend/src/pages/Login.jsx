@@ -4,6 +4,7 @@ import login from '../assets/login.webp'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../redux/slice/authSlice'
 import { mergeCart } from '../redux/slice/cartSlice'
+import { toast } from 'sonner'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -11,7 +12,7 @@ const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation();
-  const { user, guestId, loading } = useSelector((state) => state.auth);
+  const { user, guestId, loading, error } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   //Get redurect parameter and check if it's checkout or something
@@ -32,12 +33,31 @@ const Login = () => {
     mergeAndRedirect();
   }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
 
+  // Show error toast when login fails
+  useEffect(() => {
+    if (error) {
+      toast.error(typeof error === 'string' ? error : error.message || 'Login failed. Please try again.');
+    }
+  }, [error]);
 
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    dispatch(loginUser({ email, password }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
+
+    try {
+      const result = await dispatch(loginUser({ email, password })).unwrap();
+      toast.success('Login successful!');
+    } catch (err) {
+      // Error is already handled in the useEffect
+      console.error('Login failed:', err);
+    }
   }
 
   return (

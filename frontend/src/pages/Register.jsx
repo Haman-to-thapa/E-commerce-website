@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../redux/slice/authSlice'
 import { mergeCart } from '../redux/slice/cartSlice'
+import { toast } from 'sonner'
 
 const Register = () => {
   const [email, setEmail] = useState('')
@@ -12,7 +13,7 @@ const Register = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, guestId, loading } = useSelector((state) => state.auth);
+  const { user, guestId, loading, error } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
 
   // Get redirect paramerter and check if it's checkout or something
@@ -29,13 +30,35 @@ const Register = () => {
         navigate(isCheckoutRedirect ? "/checkout" : "/")
       }
     }
-  })
+  }, [user, cart, guestId, dispatch, navigate, isCheckoutRedirect]);
 
-  const handleSubmit = (e) => {
+  // Show error toast when registration fails
+  useEffect(() => {
+    if (error) {
+      toast.error(typeof error === 'string' ? error : error.message || 'Registration failed. Please try again.');
+    }
+  }, [error]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(registerUser({ name, email, password }))
 
+    if (!name || !email || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
 
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      const result = await dispatch(registerUser({ name, email, password })).unwrap();
+      toast.success('Registration successful!');
+    } catch (err) {
+      // Error is already handled in the useEffect
+      console.error('Registration failed:', err);
+    }
   }
 
   return (
@@ -84,16 +107,16 @@ const Register = () => {
           </div>
           <button type="submit"
             className='w-full bg-black text-white p-2 rounded-full mt-2 hover:bg-gray-800'
-          >Login In</button>
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
 
-          <p
-            className='text-center mt-3 text-sm'
-          >You have an account?
+          <p className='text-center mt-3 text-sm'>
+            Already have an account?{" "}
             <Link to={`/login?redirect=${encodeURIComponent(redirect || "/")}`} className='text-blue-500 underline'>
-              {
-                loading ? "Loading..." : " Sign In "
-              }
-              Login here</Link></p>
+              Login here
+            </Link>
+          </p>
         </form>
       </div>
       <div className="hidden md:block w-1/2 bg-gray-800">
