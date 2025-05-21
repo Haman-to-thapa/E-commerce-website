@@ -78,9 +78,11 @@ const ProductDetails = ({ productId }) => {
 
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
-      setMainImge(selectedProduct.images[0].url)
-    } else { setMainImge(null) }
-  }, [selectedProduct])
+      setMainImge(selectedProduct.images[0].url || null);
+    } else {
+      setMainImge(null);
+    }
+  }, [selectedProduct]);
 
 
   const handleQuantityChange = (action) => {
@@ -130,45 +132,52 @@ const ProductDetails = ({ productId }) => {
 
   return (
     <div className="p-6">
-      {
-        selectedProduct && (<div className='max-w-6xl mx-auto bg-white p-8 rounded-lg'>
+      {selectedProduct && (
+        <div className='max-w-6xl mx-auto bg-white p-8 rounded-lg'>
           <div className="flex flex-col md:flex-row">
             <div className="hidden md:flex flex-col space-y-4 mr-6">
               {/* Left Thumbnails */}
-              {
-                selectedProduct?.images?.map((image, index) => (
-
-                  <img src={image.url}
-                    key={index}
-                    alt={image.altText || `Thumnail ${index}`}
-                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-gray-300"}`}
-                    onClick={() => setMainImge(image.url)}
-                  />
-                ))
-              }
+              {selectedProduct?.images?.map((image, index) => (
+                <img
+                  src={image.url || null}
+                  key={index}
+                  alt={image.altText || `Thumbnail ${index}`}
+                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-gray-300"
+                    }`}
+                  onClick={() => setMainImge(image.url || null)}
+                />
+              ))}
             </div>
 
-            {/*Main Image  */}
+            {/* Main Image */}
             <div className="md:w-1/2">
               <div className="mb-4">
-                <img src={mainImage} alt="Main Product"
-                  className='w-full h-auto object-cover rounded-lg'
-                />
+                {mainImage ? (
+                  <img
+                    src={mainImage}
+                    alt="Main Product"
+                    className='w-full h-auto object-cover rounded-lg'
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <span className="text-gray-500">No image available</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Mobile Thumnail */}
+            {/* Mobile Thumbnails */}
             <div className="md:hidden flex overscroll-x-scroll space-x-4 mb-4">
-              {
-                selectedProduct.images.map((image, index) => (
-                  <img src={image.url}
-                    key={index}
-                    alt={image.altText || `Thumnail ${index}`}
-                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-gray-300"}`}
-                    onClick={() => setMainImge(image.url)}
-                  />
-                ))
-              }
+              {selectedProduct.images.map((image, index) => (
+                <img
+                  src={image.url || null}
+                  key={index}
+                  alt={image.altText || `Thumbnail ${index}`}
+                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${mainImage === image.url ? "border-black" : "border-gray-300"
+                    }`}
+                  onClick={() => setMainImge(image.url || null)}
+                />
+              ))}
             </div>
 
             {/* Right Side */}
@@ -272,8 +281,8 @@ const ProductDetails = ({ productId }) => {
             <h2 className='text-2xl text-center font-mediu mb-4'>You May also Like</h2>
             <ProductGrid products={similarProducts} />
           </div>
-        </div>)
-      }
+        </div>
+      )}
     </div>
   )
 }

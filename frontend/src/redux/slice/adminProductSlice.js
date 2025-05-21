@@ -6,7 +6,10 @@ const API_URL = `${import.meta.env.VITE_BACKEND_URL}`;
 // Helper function to get auth token
 const getAuthToken = () => {
   const token = localStorage.getItem("userToken");
-  return token ? `Bearer ${token}` : '';
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+  return `Bearer ${token}`;
 };
 
 // async thunk to fetch admin products
@@ -19,7 +22,10 @@ export const fetchAdminProducts = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch products');
+      if (error.response?.status === 401) {
+        return rejectWithValue({ message: "Authentication failed. Please login again." });
+      }
+      return rejectWithValue(error.response?.data || { message: "Failed to fetch products" });
     }
   }
 );
@@ -146,10 +152,11 @@ const adminProductSlice = createSlice({
       .addCase(fetchAdminProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
+        state.error = null;
       })
       .addCase(fetchAdminProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Failed to fetch products";
+        state.error = action.payload || { message: "Failed to fetch products" };
       })
       // Create Product
       .addCase(createProduct.pending, (state) => {
