@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchOrderDetails } from '../../redux/slice/orderSlice'
+import { fetchAdminProductDetails, updateProduct } from '../../redux/slice/adminProductSlice'
 import axios from 'axios'
-import { updateProduct } from '../../redux/slice/adminProductSlice'
 
 const EditProductPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { id } = useParams()
-  const { selectedProduct, loading, error } = useSelector((state) => state.products)
+  const { user } = useSelector((state) => state.auth)
+  const { selectedProduct, loading, error } = useSelector((state) => state.adminProducts)
 
 
 
@@ -26,7 +26,7 @@ const EditProductPage = () => {
     collections: "",
     material: "",
     gender: "",
-    imgaes: [
+    images: [
       // {
       //   url: "https://picsum.photos/150?random=1",
       // },
@@ -39,10 +39,16 @@ const EditProductPage = () => {
   const [uploading, setUploading] = useState(false); // Image uploading state
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchOrderDetails(id))
+    // Check if user is logged in and is admin
+    if (!user || user.role !== "admin") {
+      navigate('/');
+      return;
     }
-  }, [dispatch, id])
+
+    if (id) {
+      dispatch(fetchAdminProductDetails(id))
+    }
+  }, [dispatch, id, user, navigate])
 
   useEffect(() => {
     if (selectedProduct) {
@@ -53,7 +59,7 @@ const EditProductPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setProductData((prev) => ({ ...productData, [name]: value }))
+    setProductData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleImageUpload = async (e) => {
@@ -66,33 +72,14 @@ const EditProductPage = () => {
       const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append("image", file);
-
-        try {
-          setUploading(true);
-          const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-          setProductData((prev) => ({
-            ...prev, imgaes: [...prev.imgaes, { url: data.imageUrl, aleText: "" }]
-          }));
-          setUploading(false);
-
-        } catch (error) {
-          console.error(error);
-          setUploading(false)
-
-        }
-      }
+      setProductData((prev) => ({
+        ...prev, images: [...prev.images, { url: data.imageUrl, altText: "" }]
+      }));
       setUploading(false);
 
     } catch (error) {
       console.error(error);
       setUploading(false)
-
     }
   }
 
@@ -104,7 +91,7 @@ const EditProductPage = () => {
   }
 
   if (loading) return <p>Loading...</p>
-  if (error) return <p>error : {error}</p>
+  if (error) return <p className="text-red-500">Error: {typeof error === 'string' ? error : error.message || 'Something went wrong'}</p>
 
   return (
     <div className="max-w-5xl mx-auto p-6 shadow-md rounded-md">
@@ -221,9 +208,9 @@ const EditProductPage = () => {
             onChange={handleImageUpload} />
           {uploading && <p>Uploading Image</p>}
           <div className="flex gap-4 mt-4">
-            {productData.imgaes.map((image, index) => (
+            {productData.images.map((image, index) => (
               <div className="" key={index}>
-                <img src={image.url} alt={image.aleText || "product IMage"}
+                <img src={image.url} alt={image.altText || "product Image"}
                   className='w-20 h-20 object-cover rounded-lg shadow-md'
                 />
               </div>

@@ -1,15 +1,26 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { deleteProduct, fetchAdminProducts } from '../../redux/slice/adminProductSlice'
 
 const ProductManagement = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth)
   const { products, loading, error } = useSelector((state) => state.adminProducts)
 
   useEffect(() => {
-    dispatch(fetchAdminProducts());
-  }, [dispatch])
+    // Check if user is logged in and is admin
+    if (!user || user.role !== "admin") {
+      navigate('/');
+      return;
+    }
+    dispatch(fetchAdminProducts()).unwrap().catch((error) => {
+      if (error.message?.includes("Authentication failed") || error.message?.includes("No authentication token")) {
+        navigate('/login');
+      }
+    });
+  }, [dispatch, user, navigate])
 
 
 
@@ -30,7 +41,7 @@ const ProductManagement = () => {
   }
 
   if (loading) return <p>loading...</p>
-  if (error) return <p>Error : {error}</p>
+  if (error) return <p className="text-red-500">Error: {typeof error === 'string' ? error : error.message || 'Something went wrong'}</p>
   return (
     <div className='max-w-7xl mx-auto p-6'>
       <h2 className="text-2xl font-bold mb-6">Product Management</h2>

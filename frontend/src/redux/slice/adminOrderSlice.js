@@ -34,14 +34,14 @@ export const fetchAllOrders = createAsyncThunk(
 
 export const updateOrderStatus = createAsyncThunk('adminOrders/updateOrderStatus', async({id, status}, {rejectWithValue}) => {
   try {
-    
+
     const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,{status}, {
       headers: {Authorization: `Bearer ${localStorage.getItem("userToken")}`}
     })
 
     return response.data;
   } catch (error) {
-    return rejectWithValue(error.response?.message || "Failed updateOrderStatus")
+    return rejectWithValue(error.response?.data?.message || "Failed updateOrderStatus")
   }
 })
 
@@ -56,7 +56,7 @@ try {
   })
   return id;
 } catch (error) {
-  return rejectWithValue(error.id?.message || "failed to delete")
+  return rejectWithValue(error.response?.data?.message || "failed to delete")
 }
 
 })
@@ -99,15 +99,42 @@ const adminOrderSlice = createSlice({
         state.error = action.payload || { message: "Failed to fetch orders" };
       })
       // Update Order Status
+      .addCase(updateOrderStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateOrderStatus.fulfilled, (state,action) => {
+        state.loading = false;
         const updateOrders = action.payload;
         const orderIndex = state.orders.findIndex((order) => order._id === updateOrders._id);
         if(orderIndex !== -1) {
           state.orders[orderIndex] = updateOrders;
         }
+        state.error = null;
+      })
+      .addCase(updateOrderStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || { message: "Failed to update order status" };
+      })
+      // Delete Order
+      .addCase(deleteOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(deleteOrders.fulfilled, (state, action) => {
-        state.orders = state.orders.filter((order) => order._id !== action.payload)
+        state.loading = false;
+        state.orders = state.orders.filter((order) => order._id !== action.payload);
+        state.totalOrders = state.orders.length;
+        // Recalculate total sales
+        const totalSales = state.orders.reduce((acc, order) => {
+          return acc + order.totalPrice;
+        }, 0);
+        state.totalSales = totalSales;
+        state.error = null;
+      })
+      .addCase(deleteOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || { message: "Failed to delete order" };
       })
   }
 });

@@ -33,9 +33,13 @@ const UserManagement = () => {
 
   useEffect(() => {
     if (user && user.role === "admin") {
-      dispatch(fetchUsers())
+      dispatch(fetchUsers()).unwrap().catch((error) => {
+        if (error.message?.includes("Authentication failed") || error.message?.includes("No authentication token")) {
+          navigate('/login');
+        }
+      });
     }
-  }, [dispatch, user])
+  }, [dispatch, user, navigate])
 
 
   const handleChange = (e) => {
@@ -74,7 +78,7 @@ const UserManagement = () => {
     <div className="max-w-7xl mx-auto p-6 ">
       <h2 className="text-2xl font-bold mb-4"> User Management</h2>
       {loading && <p>Loading...</p>}
-      {error && <p>Error... {error}</p>}
+      {error && <p className="text-red-500">Error: {typeof error === 'string' ? error : error.message || 'Something went wrong'}</p>}
       {/*  Add New User Form*/}
       <div className="p-6 rounded-lg mb-6">
         <h3 className="text-lg font-bold mb-4 ">Add New User</h3>

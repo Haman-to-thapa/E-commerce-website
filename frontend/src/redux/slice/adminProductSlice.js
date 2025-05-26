@@ -30,13 +30,31 @@ export const fetchAdminProducts = createAsyncThunk(
   }
 );
 
+// async thunk to fetch single product for editing (admin only)
+export const fetchAdminProductDetails = createAsyncThunk(
+  'adminProducts/fetchProductDetails',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/api/admin/products/${id}`, {
+        headers: { Authorization: getAuthToken() }
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        return rejectWithValue({ message: "Authentication failed. Please login again." });
+      }
+      return rejectWithValue(error.response?.data || { message: "Failed to fetch product details" });
+    }
+  }
+);
+
 // async function to create a new product
 export const createProduct = createAsyncThunk(
   'adminProducts/createProduct',
   async (productData, { rejectWithValue }) => {
     try {
       const formData = new FormData();
-      
+
       // Append all product data to formData
       Object.keys(productData).forEach(key => {
         if (key === 'images') {
@@ -75,7 +93,7 @@ export const updateProduct = createAsyncThunk(
   async ({ id, productData }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
-      
+
       // Append all product data to formData
       Object.keys(productData).forEach(key => {
         if (key === 'images') {
@@ -130,6 +148,7 @@ const adminProductSlice = createSlice({
   name: "adminProducts",
   initialState: {
     products: [],
+    selectedProduct: null,
     loading: false,
     error: null,
     uploadProgress: 0,
@@ -157,6 +176,20 @@ const adminProductSlice = createSlice({
       .addCase(fetchAdminProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || { message: "Failed to fetch products" };
+      })
+      // Fetch Single Product Details
+      .addCase(fetchAdminProductDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAdminProductDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProduct = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchAdminProductDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || { message: "Failed to fetch product details" };
       })
       // Create Product
       .addCase(createProduct.pending, (state) => {

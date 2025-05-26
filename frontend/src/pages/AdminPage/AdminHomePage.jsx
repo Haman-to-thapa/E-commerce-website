@@ -14,7 +14,7 @@ const AdminHomePage = () => {
 
   useEffect(() => {
     // Check if user is logged in and is admin
-    if (!user || !user.isAdmin) {
+    if (!user || user.role !== "admin") {
       navigate('/login');
       return;
     }
@@ -26,8 +26,16 @@ const AdminHomePage = () => {
       return;
     }
 
-    dispatch(fetchAdminProducts());
-    dispatch(fetchAllOrders());
+    dispatch(fetchAdminProducts()).unwrap().catch((error) => {
+      if (error.message?.includes("Authentication failed") || error.message?.includes("No authentication token")) {
+        navigate('/login');
+      }
+    });
+    dispatch(fetchAllOrders()).unwrap().catch((error) => {
+      if (error.message?.includes("Authentication failed") || error.message?.includes("No authentication token")) {
+        navigate('/login');
+      }
+    });
   }, [dispatch, user, navigate]);
 
   // Helper function to format error message

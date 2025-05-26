@@ -45,7 +45,7 @@ const AdminSideBar = () => {
         <NavLink to='/admin/orders'
           className={({ isActive }) => isActive ?
             "flex items-center space-x-2 text-white py-3 px-4 rounded bg-gray-700" :
-            "flex items-center space-x-2 hover:bg-gray-700 hover:text-white text-gray-300 py-3 px-4  "}
+            "flex items-center space-x-2 hover:bg-gray-700 hover:text-white text-gray-300 py-3 px-4 rounded"}
         >
           <FaClipboardList />
           <span>Order</span>
@@ -55,7 +55,7 @@ const AdminSideBar = () => {
         <NavLink to='/admin/shops'
           className={({ isActive }) => isActive ?
             "flex items-center space-x-2 text-white py-3 px-4 rounded bg-gray-700" :
-            "flex items-center space-x-2 hover:bg-gray-700 hover:text-white text-gray-300 py-3 px-4  "}
+            "flex items-center space-x-2 hover:bg-gray-700 hover:text-white text-gray-300 py-3 px-4 rounded"}
         >
           <FaStore />
           <span>Shop</span>

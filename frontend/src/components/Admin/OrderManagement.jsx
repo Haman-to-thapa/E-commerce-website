@@ -28,7 +28,11 @@ const OrderManagement = () => {
     if (!user || user.role !== "admin") {
       navigate('/');
     } else {
-      dispatch(fetchAllOrders());
+      dispatch(fetchAllOrders()).unwrap().catch((error) => {
+        if (error.message?.includes("Authentication failed") || error.message?.includes("No authentication token")) {
+          navigate('/login');
+        }
+      });
     }
   }, [dispatch, user, navigate])
 
@@ -38,7 +42,7 @@ const OrderManagement = () => {
   }
 
   if (loading) return <p>Loading...</p>
-  if (error) return <p>Error : {error}</p>
+  if (error) return <p className="text-red-500">Error: {typeof error === 'string' ? error : error.message || 'Something went wrong'}</p>
 
   return (
     <div className="max-w-7xl mx-auto p-6">
