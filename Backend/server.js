@@ -15,9 +15,26 @@ import adminOrderRoutes from './routes/adminOrderRoutes.js'
 
 const app = express()
 // app.use(express.json())
-// Configure CORS to allow all origins
+// Configure CORS to allow specific origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://e-commerce-website-frontend-iecn.onrender.com',
+  'https://e-commerce-website-curh.onrender.com'
+];
+
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -25,6 +42,15 @@ app.use(cors({
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
 
 dotenv.config();
 
